@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
       POSTGRES_DB: "${POSTGRES_DB}"
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 5s
       timeout: 5s
       retries: 10
@@ -26,18 +26,7 @@ services:
       dockerfile: Dockerfile
     command: uvicorn --log-level debug app.main:app --host 0.0.0.0 --port $APP_PORT --reload
     env_file:
-      - .env  # Подключаем общий .env файл
-    environment: &env
-      # Все переменные берутся из .env
-      POSTGRES_HOST: "${POSTGRES_HOST}"
-      POSTGRES_PORT: "${POSTGRES_PORT}"
-      POSTGRES_USER: "${POSTGRES_USER}"
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-      POSTGRES_DB: "${POSTGRES_DB}"
-      APP_PORT: "${APP_PORT}"
-      SQLALCHEMY_ECHO: "${SQLALCHEMY_ECHO}"
-      SQLALCHEMY_POOL_SIZE: "${SQLALCHEMY_POOL_SIZE}"
-      LOGGING_LEVEL: "${LOGGING_LEVEL}"
+      - .env
     ports:
       - "${APP_PORT}:${APP_PORT}"
     volumes:
@@ -46,6 +35,20 @@ services:
       currency_db:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - currency_network
+
+  init_container:
+    build:
+      context: .
+      dockerfile: init.Dockerfile
+    depends_on:
+      currency_db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - POSTGRES_PORT=5432
     networks:
       - currency_network
 
