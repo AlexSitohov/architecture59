@@ -1,12 +1,13 @@
 import logging
 from contextlib import asynccontextmanager
+from contextvars import ContextVar
 from typing import AsyncIterator
 
 from sqlalchemy.ext.asyncio import (
     create_async_engine,
     AsyncSession,
     async_sessionmaker,
-    async_scoped_session
+    async_scoped_session,
 )
 
 from sqlalchemy.engine import URL
@@ -18,11 +19,21 @@ logger = logging.getLogger(__name__)
 
 class Database:
     def __init__(self, db_config: DatabaseConfig) -> None:
+
+        self._session_context = ContextVar("session_context")
+
         self.__uri = self.__construct_url(db_config)
-        self.__engine = create_async_engine(url=self.__uri, echo=db_config.echo, pool_size=db_config.pool_size,
-                                            future=True)
+        self.__engine = create_async_engine(
+            url=self.__uri,
+            echo=db_config.echo,
+            pool_size=db_config.pool_size,
+            future=True,
+        )
         self.__session_factory = async_scoped_session(
-            async_sessionmaker(self.__engine, expire_on_commit=False, class_=AsyncSession)
+            async_sessionmaker(
+                self.__engine, expire_on_commit=False, class_=AsyncSession
+            ),
+            scopefunc=self._session_context.get,  # Добавляем scopefunc
         )
 
     @staticmethod

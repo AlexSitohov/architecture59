@@ -17,10 +17,12 @@ class DatabaseConfig:
     @classmethod
     @_cache
     def provide(cls) -> Self:
-        return cls(db_login=os.environ["POSTGRES_USER"],
-                   db_password=os.environ["POSTGRES_PASSWORD"],
-                   db_host=os.environ["POSTGRES_HOST"],
-                   db_port=int(os.environ["POSTGRES_PORT"]),
-                   db_name=os.environ["POSTGRES_DB"],
-                   echo=False,
-                   pool_size=int(os.getenv("SQLALCHEMY_POOL_SIZE", 10)))
+        return cls(
+            db_login=os.environ["POSTGRES_USER"],
+            db_password=os.environ["POSTGRES_PASSWORD"],
+            db_host=os.environ["POSTGRES_HOST"],
+            db_port=int(os.environ["POSTGRES_PORT"]),
+            db_name=os.environ["POSTGRES_DB"],
+            echo=False,
+            pool_size=int(os.getenv("SQLALCHEMY_POOL_SIZE", 10)),
+        )

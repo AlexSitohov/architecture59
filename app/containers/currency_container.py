@@ -7,7 +7,9 @@ from app.services.currency_service import CurrencyService
 
 
 class Container(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(modules=["../endpoints/currency"])
+    wiring_config = containers.WiringConfiguration(
+        modules=["app.endpoints.currency"]
+    )  # Уточните путь к модулю
 
     db = providers.Singleton(Database, db_config=DatabaseConfig.provide())
 

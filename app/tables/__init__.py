@@ -9,6 +9,8 @@ Base = declarative_base()
 
 
 class Currency(Base):
+    __tablename__ = "currencies"
+
     id: Mapped[UUID] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(nullable=False, unique=True)
     code: Mapped[str] = mapped_column(nullable=False, unique=True)
