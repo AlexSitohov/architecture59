@@ -1,0 +1,3 @@
+aiokafka
+dependency_injector==4.46.0
+clickhouse-sqlalchemy
