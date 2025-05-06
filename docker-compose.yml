@@ -1,4 +1,21 @@
 services:
+
+  api_gateway:
+    container_name: api_gateway
+    build:
+      context: api_gateway
+      dockerfile: Dockerfile
+    command: uvicorn app.main:app --host 0.0.0.0 --port 80 --reload
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+    volumes:
+      - .:/api_gateway/app
+    restart: unless-stopped
+    networks:
+      - currency_network
+
   currency_db:
     image: postgres:16
     container_name: currency_db
