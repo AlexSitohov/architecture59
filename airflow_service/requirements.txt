@@ -1,0 +1,3 @@
+airflow-clickhouse-plugin
+apache-airflow-providers-postgres
+pandas

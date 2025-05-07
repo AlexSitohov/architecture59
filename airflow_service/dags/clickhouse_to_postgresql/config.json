@@ -1,0 +1,68 @@
+{
+  "postgresql": {
+    "connection_id": "postgres_default",
+    "schema_name": "your_table",
+    "table_name": "public"
+  },
+  "clickhouse": {
+    "connection_id": "clickhouse_default",
+    "table_name": "your_table",
+    "batch_size": 10000
+  },
+  "rows": {
+    "symbol": {
+      "source_name": "symbol"
+    },
+    "event_time": {
+      "source_name": "event_time"
+    },
+    "price_change": {
+      "source_name": "price_change"
+    },
+    "price_change_percent": {
+      "source_name": "price_change_percent"
+    },
+    "weighted_avg_price": {
+      "source_name": "weighted_avg_price"
+    },
+    "last_price": {
+      "source_name": "last_price"
+    },
+    "last_quantity": {
+      "source_name": "last_quantity"
+    },
+    "open_price": {
+      "source_name": "open_price"
+    },
+    "high_price": {
+      "source_name": "high_price"
+    },
+    "low_price": {
+      "source_name": "low_price"
+    },
+    "total_traded_volume": {
+      "source_name": "total_traded_volume"
+    },
+    "total_traded_quote_volume": {
+      "source_name": "total_traded_quote_volume"
+    },
+    "open_time": {
+      "source_name": "open_time"
+    },
+    "close_time": {
+      "source_name": "close_time"
+    },
+    "first_trade_id": {
+      "source_name": "first_trade_id"
+    },
+    "last_trade_id": {
+      "source_name": "last_trade_id"
+    },
+    "total_trades": {
+      "source_name": "total_trades"
+    },
+    "processing_time": {
+      "source_name": "processing_time"
+    }
+  }
+}
