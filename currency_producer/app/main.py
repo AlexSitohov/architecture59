@@ -53,14 +53,12 @@ async def websocket_client(symbols: list[str]):
 
 async def main():
     symbols = [
-        "BTCRUB",
         "BTCUSDT",
         "ETHUSDT",
-        "ETHRUB",
-        "USDTTRCUSDT",
-        "USDTTRCRUB",
-        "USDTERCUSDT",
-        "USDTERCRUB",
+        "WBTCUSDT",
+        "BNBUSDT",
+        "DEFIUSDT",
+        "BCHUSDT",
     ]
     await websocket_client(symbols)
 

@@ -15,11 +15,9 @@ class CurrencyService:
         self.current_batch = []
 
     async def process_ticker_stream(self):
-        """Основной метод обработки потока ticker-сообщений"""
         async for raw_message in self.kafka_service.consume_message():
             try:
                 message = raw_message
-                print("message", message)
                 if message.get("stream", "").endswith("@ticker"):
                     ticker_data = self._transform_ticker_data(message["data"])
                     self.current_batch.append(ticker_data)
@@ -52,7 +50,6 @@ class CurrencyService:
             "first_trade_id": data["F"],
             "last_trade_id": data["L"],
             "total_trades": data["n"],
-            "processing_time": strip_microseconds(datetime.now()),
         }
 
     async def _flush_batch(self):

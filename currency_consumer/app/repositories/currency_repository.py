@@ -10,7 +10,6 @@ class CurrencyRepository:
         if not batch:
             return
 
-        # Преобразуем данные в строку для VALUES
         def format_value(value):
             if isinstance(value, str):
                 return f"'{value}'"
@@ -38,7 +37,6 @@ class CurrencyRepository:
                     "first_trade_id",
                     "last_trade_id",
                     "total_trades",
-                    "processing_time",
                 ]
             )
             values_rows.append(f"({row})")
@@ -50,8 +48,7 @@ class CurrencyRepository:
                 symbol, event_time, price_change, price_change_percent,
                 weighted_avg_price, last_price, last_quantity, open_price,
                 high_price, low_price, total_traded_volume, total_traded_quote_volume,
-                open_time, close_time, first_trade_id, last_trade_id, total_trades,
-                processing_time
+                open_time, close_time, first_trade_id, last_trade_id, total_trades
             )
             VALUES
             {values_sql}

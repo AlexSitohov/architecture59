@@ -7,8 +7,7 @@ import logging
 
 sys.path.insert(0, (os.path.dirname(__file__)))
 
-from src.source_to_target import DagConfig
-from src.prepare import PrepareProvider
+from src.config import DagConfig
 from src.upload import UploadProvider
 
 dag_folder = os.path.dirname(os.path.abspath(__file__))
@@ -21,8 +20,7 @@ global_config = dag_config.global_config
 logger = logging.getLogger(__name__)
 
 
-def prepare(**context):
-    PrepareProvider(global_config).execute()
+def prepare(**context): ...
 
 
 def upload(**context):
@@ -34,7 +32,7 @@ def actualize(**context): ...
 
 with DAG(
     dag_name,
-    schedule_interval="@daily",
+    schedule_interval="*/3 * * * *",
     start_date=datetime(2025, 1, 1),
     catchup=False,
     max_active_runs=1,

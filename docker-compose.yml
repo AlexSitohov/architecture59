@@ -169,4 +169,5 @@ volumes:
 
 networks:
   currency_network:
-    driver: bridge
+    external: true
+    name: currency_network

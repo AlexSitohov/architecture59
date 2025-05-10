@@ -1,4 +1,5 @@
 import json
+import os
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -18,6 +19,8 @@ class ServicesConfig:
     @classmethod
     def from_json_file(cls, file_path: str):
         config_path = Path(file_path)
+        if not os.path.isfile(config_path):
+            raise FileNotFoundError(f"Config file not found: {config_path}")
         with open(config_path, "r", encoding="utf-8") as file:
             data = json.load(file)
 

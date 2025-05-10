@@ -1,13 +1,6 @@
 import json
 import os
 from dataclasses import dataclass
-from typing import List
-
-
-@dataclass
-class RowConfig:
-    name: str
-    source_name: str
 
 
 @dataclass
@@ -21,25 +14,18 @@ class PostgresqlConfig:
 class ClickhouseConfig:
     connection_id: str
     table_name: str
-    batch_size: int
 
 
 @dataclass
 class DagGlobalConfig:
     clickhouse: ClickhouseConfig
     postgresql: PostgresqlConfig
-    rows: List[RowConfig]
 
     def __post_init__(self):
         if isinstance(self.postgresql, dict):
-            self.target_s2t = PostgresqlConfig(**self.postgresql)
+            self.postgresql = PostgresqlConfig(**self.postgresql)
         if isinstance(self.clickhouse, dict):
             self.clickhouse = ClickhouseConfig(**self.clickhouse)
-        if isinstance(self.rows, dict):
-            self.rows = [
-                RowConfig(name=key, source_name=value["source_name"])
-                for key, value in self.rows.items()
-            ]
 
 
 class DagConfig:

@@ -268,3 +268,6 @@ airflow-build-dockerfile*
 *.zip
 
 _api/
+
+*.json
+
