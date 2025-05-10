@@ -1,3 +1,4 @@
 aiokafka
 dependency_injector==4.46.0
 clickhouse-sqlalchemy
+asynch==0.2.5
