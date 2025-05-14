@@ -8,6 +8,7 @@ from app.middleware.jwt_auth_middleware import jwt_auth_middleware
 
 def create_app() -> FastAPI:
     container = Container()
+    container.init_resources()
     app = FastAPI()
     app.container = container
     app.middleware("http")(jwt_auth_middleware)

@@ -10,13 +10,13 @@ from app.clients.reroute_request_client import (
 from fastapi import Request
 
 from app.containers.container import Container
+from app.utils.cache import get_redis_cache
 
 gateway_router = APIRouter()
 
 
-@gateway_router.api_route(
-    "/{service_name}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"]
-)
+@gateway_router.api_route("/{service_name}/{path:path}", methods=["GET"])
+@get_redis_cache(hash_name="gateway", expiration_time=30)
 @inject
 async def gateway(
     request: Request,
@@ -26,7 +26,6 @@ async def gateway(
         RerouteRequestToServiceClient, Depends(Provide[Container.reroute_client])
     ],
 ):
-
     return await reroute_client.reroute_request(
         request=request, service_name=service_name, path=path
     )
