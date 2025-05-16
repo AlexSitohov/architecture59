@@ -2,6 +2,8 @@ import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from pydantic import Field
+from pydantic_settings import BaseSettings
 
 
 @dataclass
@@ -15,6 +17,7 @@ class ServiceConfig:
 @dataclass
 class ServicesConfig:
     currency_service: ServiceConfig
+    users_service: ServiceConfig
 
     @classmethod
     def from_json_file(cls, file_path: str):
@@ -24,17 +27,18 @@ class ServicesConfig:
         with open(config_path, "r", encoding="utf-8") as file:
             data = json.load(file)
 
-        return cls(currency_service=ServiceConfig(**data["currency_service"]))
+        return cls(
+            currency_service=ServiceConfig(**data["currency_service"]),
+            users_service=ServiceConfig(**data["users_service"]),
+        )
 
-    def get_service_config(self, service: str) -> ServiceConfig:
+    def get_service_config(self, service: str) -> ServiceConfig | None:
         service = service.lower()
         if service == "currency_service":
             return self.currency_service
-
-
-"""Redis configuration module."""
-from pydantic import Field
-from pydantic_settings import BaseSettings
+        if service == "users_service":
+            return self.users_service
+        return None
 
 
 class RedisSettings(BaseSettings):

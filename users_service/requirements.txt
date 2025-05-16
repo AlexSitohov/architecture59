@@ -1,0 +1,13 @@
+uvicorn==0.34.2
+pydantic==2.11.3
+pydantic[email]
+pydantic-settings==2.3
+SQLAlchemy==2.0.40
+fastapi==0.115
+asyncpg==0.30.0
+alembic==1.15.2
+psycopg2==2.9.10
+dependency_injector==4.46.0
+psycopg-binary==3.2.6
+passlib
+python-jose

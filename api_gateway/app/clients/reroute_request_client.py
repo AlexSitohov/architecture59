@@ -9,7 +9,9 @@ class RerouteRequestToServiceClient:
     def __init__(self, config: ServicesConfig):
         self.__global_config = config
 
-    async def reroute_request(self, request: Request, service_name: str, path: str):
+    async def reroute_request(
+        self, request: Request, service_name: str, path: str, method: str = None
+    ):
         target_url = self.__construct_url(service_name, path)
         async with httpx.AsyncClient() as client:
             try:
@@ -17,8 +19,9 @@ class RerouteRequestToServiceClient:
                 headers.pop("host", None)
                 headers.pop("content-length", None)
                 body = await request.body()
+                method = method if method else request.method
                 response = await client.request(
-                    method=request.method,
+                    method=method,
                     url=target_url,
                     headers=headers,
                     content=body,

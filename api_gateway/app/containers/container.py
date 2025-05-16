@@ -9,7 +9,11 @@ from app.repositories.redis_repository import RedisRepository
 
 class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
-        modules=["app.endpoints.gateway", "app.utils.cache"]
+        modules=[
+            "app.endpoints.gateway",
+            "app.utils.cache",
+            "app.middleware.jwt_auth_middleware",
+        ]
     )
 
     config = providers.Configuration()
