@@ -11,6 +11,7 @@ class Container(containers.DeclarativeContainer):
     wiring_config = containers.WiringConfiguration(
         modules=[
             "app.endpoints.gateway",
+            "app.endpoints.users",
             "app.utils.cache",
             "app.middleware.jwt_auth_middleware",
         ]

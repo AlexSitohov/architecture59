@@ -42,4 +42,6 @@ class RerouteRequestToServiceClient:
 
     def __construct_url(self, service_name: str, path: str):
         config = self.__global_config.get_service_config(service_name)
-        return f"{config.base_url}{config.prefix}/{path}"
+        r = f"{config.base_url}{config.prefix}/{path}"
+        print("!!!!!!", r)
+        return r

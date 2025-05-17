@@ -3,6 +3,9 @@ from dataclasses import dataclass
 from functools import cache as _cache
 from typing import Self
 
+from pydantic import Field
+from pydantic_settings import BaseSettings
+
 
 @dataclass
 class DatabaseConfig:
@@ -26,3 +29,18 @@ class DatabaseConfig:
             echo=False,
             pool_size=int(os.getenv("SQLALCHEMY_POOL_SIZE", 10)),
         )
+
+
+class RedisSettings(BaseSettings):
+    host: str = Field(default="redis", env="REDIS_HOST")
+    port: int = Field(default=6379, env="REDIS_PORT")
+    db: int = Field(default=0, env="REDIS_DB")
+    password: str = Field(default="", env="REDIS_PASSWORD")
+    default_ttl: int = Field(default=3600, env="REDIS_DEFAULT_TTL")
+
+    @property
+    def url(self) -> str:
+        """Get Redis connection URL."""
+        if self.password:
+            return f"redis://:{self.password}@{self.host}:{self.port}/{self.db}"
+        return f"redis://{self.host}:{self.port}/{self.db}"

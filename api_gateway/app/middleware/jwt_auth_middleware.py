@@ -47,6 +47,11 @@ async def verify_token_with_service(
     return response.status_code == status.HTTP_200_OK
 
 
+async def check_token_blacklist(redis_repository: RedisRepository, token: str) -> bool:
+    cache_key = f"black_list_jwt:{get_jwt_fingerprint(token)}"
+    return await redis_repository.get(cache_key)
+
+
 async def cache_token(redis_repo: RedisRepository, token: str, ttl: int = 60) -> None:
     """Cache token in Redis with specified TTL."""
     cache_key = f"jwt:{get_jwt_fingerprint(token)}"
@@ -77,6 +82,14 @@ async def jwt_auth_middleware(
     try:
         token = extract_bearer_token(request.headers.get("Authorization"))
 
+        blacklist = await check_token_blacklist(redis_repository, token)
+        print("333########", blacklist)
+        if blacklist:
+            return JSONResponse(
+                content={"message": "blacklisted or expired token"},
+                status_code=status.HTTP_401_UNAUTHORIZED,
+            )
+
         if await is_token_cached(redis_repository, token):
             return await call_next(request)
 
@@ -90,6 +103,7 @@ async def jwt_auth_middleware(
         return await call_next(request)
 
     except Exception as e:
+        print("!!!!!", e)
         return JSONResponse(
             content={"message": "Authentication failed"},
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,

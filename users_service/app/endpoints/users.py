@@ -48,3 +48,14 @@ async def verify_token(
     token: str = Depends(get_token_from_header),
 ) -> dict:
     return await users_service.verify_token(token)
+
+
+@users_router.post("/logout", status_code=200)
+@inject
+async def logout(
+    users_service: Annotated[
+        UsersService, Depends(Provide[Container.currency_service])
+    ],
+    token: str = Depends(get_token_from_header),
+) -> str:
+    return await users_service.logout(token)

@@ -11,3 +11,4 @@ dependency_injector==4.46.0
 psycopg-binary==3.2.6
 passlib
 python-jose
+redis
