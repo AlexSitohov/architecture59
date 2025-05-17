@@ -19,11 +19,11 @@ class Container(containers.DeclarativeContainer):
 
     config = providers.Configuration()
 
-    config.redis.host.from_env("REDIS_HOST", "redis")
-    config.redis.port.from_env("REDIS_PORT", 6379)
-    config.redis.db.from_env("REDIS_DB", 0)
-    config.redis.password.from_env("REDIS_PASSWORD", "")
-    config.redis.default_ttl.from_env("REDIS_DEFAULT_TTL", 3600)
+    config.redis.host.from_env("REDIS_HOST")
+    config.redis.port.from_env("REDIS_PORT")
+    config.redis.db.from_env("REDIS_DB")
+    config.redis.password.from_env("REDIS_PASSWORD")
+    config.redis.default_ttl.from_env("REDIS_DEFAULT_TTL")
 
     services_config = providers.Singleton(
         ServicesConfig.from_json_file,
