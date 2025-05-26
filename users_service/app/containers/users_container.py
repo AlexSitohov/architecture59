@@ -1,4 +1,5 @@
 from dependency_injector import containers, providers
+
 from app.config.jwt_settings import JWTSettings
 from app.database.connection import Database
 from app.config.database import DatabaseConfig
@@ -25,7 +26,7 @@ class Container(containers.DeclarativeContainer):
     config.redis.password.from_env("REDIS_PASSWORD")
     config.redis.default_ttl.from_env("REDIS_DEFAULT_TTL")
 
-    redis_settings = providers.Factory(
+    redis_settings = providers.Singleton(
         RedisSettings,
         host=config.redis.host,
         port=config.redis.port,
@@ -55,7 +56,7 @@ class Container(containers.DeclarativeContainer):
 
     jwt_service = providers.Factory(JWTService, jwt_config=jwt_setting)
 
-    currency_service = providers.Factory(
+    users_service = providers.Factory(
         UsersService,
         users_repository=users_repository,
         jwt_service=jwt_service,

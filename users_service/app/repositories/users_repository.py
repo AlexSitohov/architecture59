@@ -1,10 +1,10 @@
 from fastapi import HTTPException, status
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, text
 from sqlalchemy.ext.asyncio import async_sessionmaker
 from passlib.context import CryptContext
 
-from app.models.users import UserCreate, UserResponse
-from app.tables.users import User
+from app.models.users import UserCreate, UserResponse, UserConfirm
+from app.tables.users import User, UserConfirmedStatus
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -13,15 +13,19 @@ class UsersRepository:
     def __init__(self, session_factory: async_sessionmaker):
         self.session = session_factory
 
-    async def create_user(self, dto: UserCreate):
+    async def create_user(self, dto: UserCreate, verification_code: str):
         hashed_password = pwd_context.hash(dto.password)
 
         async with self.session() as session:
             try:
                 stmt = (
-                    insert(User)
-                    .values(email=dto.email, password_hash=hashed_password)
-                    .returning(User)
+                    insert(UserConfirmedStatus)
+                    .values(
+                        email=dto.email,
+                        password_hash=hashed_password,
+                        verification_code=verification_code,
+                    )
+                    .returning(UserConfirmedStatus)
                 )
                 result = await session.execute(stmt)
                 user = result.scalars().one()
@@ -73,3 +77,42 @@ class UsersRepository:
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid password hash format",
             )
+
+    async def confirm_email(self, dto: UserConfirm):
+        async with self.session() as session:
+            query = select(UserConfirmedStatus).where(
+                UserConfirmedStatus.email == dto.email
+            )
+            result = await session.execute(query)
+            user = result.scalars().one_or_none()
+            if not user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail="User not found",
+                )
+            if dto.code != user.verification_code:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid verification code",
+                )
+            insert_query = text(
+                """
+                INSERT INTO users (email, password_hash)
+                SELECT email, password_hash
+                FROM users_confirmed_status
+                WHERE email = :email
+            """
+            )
+            await session.execute(insert_query, {"email": dto.email})
+
+            delete_query = text(
+                """
+                DELETE FROM users_confirmed_status
+                WHERE email = :email
+            """
+            )
+            await session.execute(delete_query, {"email": dto.email})
+
+            await session.commit()
+
+            return {"email": dto.email, "confirmed": True}
