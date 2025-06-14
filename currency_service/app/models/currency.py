@@ -25,3 +25,7 @@ class CurrencyGET(BaseModel):
     action_suggestion: str
     raw_processing_time: datetime
     processing_time: datetime
+
+
+class CurrencySubscription(BaseModel):
+    symbol: str

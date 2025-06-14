@@ -83,7 +83,6 @@ async def jwt_auth_middleware(
         token = extract_bearer_token(request.headers.get("Authorization"))
 
         blacklist = await check_token_blacklist(redis_repository, token)
-        print("333########", blacklist)
         if blacklist:
             return JSONResponse(
                 content={"message": "blacklisted or expired token"},

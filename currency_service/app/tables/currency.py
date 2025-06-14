@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import String, Float, BigInteger, DateTime, text
+from sqlalchemy import String, Float, BigInteger, DateTime, text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -38,3 +38,11 @@ class CurrencyStatistic(Base):
     valid_to: Mapped[datetime] = mapped_column(
         server_default=text("'2999-12-31 00:00:00'::timestamp")
     )
+
+
+class SubscriptionCurrency(Base):
+    __tablename__ = "subscriptions_currency"
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    email: Mapped[str] = mapped_column(String(255), nullable=False)
+    symbol: Mapped[str] = mapped_column(String(10), nullable=False)
+    __table_args__ = (UniqueConstraint("email", "symbol", name="uq_email_symbol"),)
