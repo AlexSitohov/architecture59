@@ -4,13 +4,13 @@ from dependency_injector.wiring import inject, Provide
 from jose import jwt, JWTError
 
 from app.containers.currency_container import Container
-from app.models.currency import CurrencyGET, CurrencySubscription
+from app.models.currency import CurrencyGET, CurrencySubscription, UserData
 from app.services.currency_service import CurrencyService
 
 currency_router = APIRouter(tags=["CURRENCY"], prefix="/api/v1")
 
 
-async def get_token_from_header(authorization: str = Header(...)):
+async def get_token_from_header(authorization: str = Header(...)) -> str:
     if not authorization.startswith("Bearer "):
         raise HTTPException(
             status_code=400, detail="Заголовок Authorization должен начинаться с Bearer"
@@ -18,7 +18,7 @@ async def get_token_from_header(authorization: str = Header(...)):
     return authorization[7:]
 
 
-async def decode_jwt(token: str = Depends(get_token_from_header)):
+async def decode_jwt(token: str = Depends(get_token_from_header)) -> UserData:
     try:
         payload = jwt.decode(
             token,
@@ -26,7 +26,8 @@ async def decode_jwt(token: str = Depends(get_token_from_header)):
             options={"verify_signature": False},
             algorithms=["HS256"],
         )
-        return payload
+        return UserData(id=payload["id"], email=payload["email"])
+
     except JWTError:
         raise HTTPException(status_code=401, detail="Невозможно декодировать токен")
 
@@ -37,7 +38,7 @@ async def get_stable_currency_rate(
     currency_service: Annotated[
         CurrencyService, Depends(Provide[Container.currency_service])
     ],
-    user_data: dict = Depends(decode_jwt),
+    user_data: UserData = Depends(decode_jwt),
 ):
     return await currency_service.get_stable_currency_rate(user_data)
 
@@ -49,6 +50,6 @@ async def create_currency_subscription(
         CurrencyService, Depends(Provide[Container.currency_service])
     ],
     dto: CurrencySubscription,
-    user_data: dict = Depends(decode_jwt),
+    user_data: UserData = Depends(decode_jwt),
 ):
     return await currency_service.create_currency_subscription(dto, user_data)

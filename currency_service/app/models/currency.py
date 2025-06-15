@@ -29,3 +29,8 @@ class CurrencyGET(BaseModel):
 
 class CurrencySubscription(BaseModel):
     symbol: str
+
+
+class UserData(BaseModel):
+    id: int
+    email: str
